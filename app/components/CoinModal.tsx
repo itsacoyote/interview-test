@@ -1,21 +1,26 @@
-"use client";
+'use client'
 
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
 
 interface CoinModalProps {
+  id: string
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function CoinModal({ isOpen, onClose }: CoinModalProps) {
+export default function CoinModal({ id, isOpen, onClose }: CoinModalProps) {
+  const [coin, setCoin] = useState()
+
   useEffect(() => {
     if (isOpen) {
-
+      fetch(`/api/coin/${id}`).then(res => res.json()).then(data => {
+        setCoin(data)
+      })
     }
-  }, []);
+  }, [isOpen, id])
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <dialog className="modal modal-open">
@@ -28,6 +33,9 @@ export default function CoinModal({ isOpen, onClose }: CoinModalProps) {
             ✕
           </button>
         </form>
+        <div>
+          {coin && coin.name}
+        </div>
 
         <div className="modal-action">
           <button onClick={onClose} className="btn">
@@ -36,5 +44,5 @@ export default function CoinModal({ isOpen, onClose }: CoinModalProps) {
         </div>
       </div>
     </dialog>
-  );
+  )
 }

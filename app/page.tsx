@@ -19,6 +19,7 @@ export default function Home() {
   const [coins, setCoins] = useState<Coin[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [modalCoinId, setModalCoinId] = useState<string | undefined>(undefined)
 
   useEffect(() => {
     fetch('/api/coins').then(res => res.json()).then(data => {
@@ -45,7 +46,8 @@ export default function Home() {
     })
   }, [coins, searchTerm])
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (id: string) => {
+    setModalCoinId(id)
     setIsModalOpen(true)
   }
 
@@ -74,10 +76,13 @@ export default function Home() {
           <tbody>
           {filteredCoins && filteredCoins.map(coin => {
             return (
-              <tr>
+              <tr key={coin.id}>
                 <td>{coin.id}</td>
                 <td>{coin.name}</td>
                 <td>{coin.symbol}</td>
+                <td>
+                  <button className="btn" onClick={() => handleOpenModal(coin.id)}/>
+                </td>
               </tr>
             )
           })}
@@ -85,10 +90,11 @@ export default function Home() {
         </table>
       </div>
 
-      <CoinModal
+      {modalCoinId && <CoinModal
+        id={modalCoinId}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-      />
+      />}
     </main>
   )
 }
