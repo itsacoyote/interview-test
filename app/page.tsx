@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import CoinModal from './components/CoinModal'
 import { QueryClientProvider, useQuery, QueryClient } from '@tanstack/react-query'
@@ -35,6 +35,16 @@ export default function Home() {
     })
   }, [])
 
+
+  // const filteredCoins
+  // coin.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCoins = useMemo(() => {
+    return coins.filter(coin => {
+      const searchString = searchTerm.toLocaleLowerCase()
+      return coin.name.toLocaleLowerCase().includes(searchString) || coin.symbol.toLocaleLowerCase().includes(searchString)
+    })
+  }, [coins, searchTerm])
+
   const handleOpenModal = () => {
     setIsModalOpen(true)
   }
@@ -43,8 +53,6 @@ export default function Home() {
     setIsModalOpen(false)
   }
 
-  // const filteredCoins
-  // coin.name.toLowerCase().includes(searchTerm.toLowerCase())
 
   return (
     <main
@@ -64,7 +72,7 @@ export default function Home() {
       <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 bg-white">
         <table className="table">
           <tbody>
-          {coins && coins.map(coin => {
+          {filteredCoins && filteredCoins.map(coin => {
             return (
               <tr>
                 <td>{coin.id}</td>
