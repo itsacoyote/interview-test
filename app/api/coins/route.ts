@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
     "symbol": "gib",
     "name": "༼ つ ◕_◕ ༽つ",
     "platforms": {
-        "hedera-hashgraph": "0x00000000000000000000000000000000007872cb"
+        "ethereum": "0x00000000000000000000000000000000007872cb"
     }
   }
  */
