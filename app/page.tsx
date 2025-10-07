@@ -1,8 +1,9 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
 
-import CoinModal from "./components/CoinModal";
+import CoinModal from './components/CoinModal'
+import { QueryClientProvider, useQuery, QueryClient } from '@tanstack/react-query'
 
 interface Coin {
   id: string;
@@ -15,17 +16,32 @@ interface Coin {
 }
 
 export default function Home() {
-  const [coins, setCoins] = useState<Coin[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [coins, setCoins] = useState<Coin[]>([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
+
+  useEffect(() => {
+    fetch('/api/coins').then(res => res.json()).then(data => {
+      const coins = []
+      for (const coin of data) {
+        if (coin.platforms.ethereum) {
+          coins.push(coin)
+        }
+        if (coins.length >= 50) {
+          break
+        }
+      }
+      setCoins(coins)
+    })
+  }, [])
 
   const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
+    setIsModalOpen(true)
+  }
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+    setIsModalOpen(false)
+  }
 
   // const filteredCoins
   // coin.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -48,9 +64,15 @@ export default function Home() {
       <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 bg-white">
         <table className="table">
           <tbody>
-            <tr>
-              <td>---</td>
-            </tr>
+          {coins && coins.map(coin => {
+            return (
+              <tr>
+                <td>{coin.id}</td>
+                <td>{coin.name}</td>
+                <td>{coin.symbol}</td>
+              </tr>
+            )
+          })}
           </tbody>
         </table>
       </div>
@@ -60,5 +82,5 @@ export default function Home() {
         onClose={handleCloseModal}
       />
     </main>
-  );
+  )
 }
